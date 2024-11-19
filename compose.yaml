@@ -12,8 +12,8 @@ services:
     volumes:
       - .:/opt/project
       - api_mock_certs:/root/ca/rsa/volumed_dir
-    # entrypoint: ["sh", "-c", "while true; do sleep 1000; done"] infinite loop to run container
-    entrypoint: ["ping", "-c", "5", "api-mock-server"]
+    entrypoint: ["sh", "-c", "while true; do sleep 1000; done"] #infinite loop to run container
+    #entrypoint: ["ping", "-c", "5", "api-mock-server"]
 
   api-mock:
     build: .
