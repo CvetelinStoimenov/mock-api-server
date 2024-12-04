@@ -1,0 +1,6 @@
+{
+    "use_https": true,
+    "base_url_http": "http://localhost:8080",
+    "base_url_https": "https://localhost:8443",
+    "cert_path": "/opt/project/certs/root_ca.cert.pem"
+  }

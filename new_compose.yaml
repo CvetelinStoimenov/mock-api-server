@@ -1,0 +1,46 @@
+services:
+  tests:
+    # TODO by students: create own tests image using separate Dockerfile
+    build: .
+    container_name: tests-server
+    depends_on:
+      api-mock:
+        condition: service_started
+    environment:
+      - REQUESTS_CA_BUNDLE=/root/ca/rsa/volumed_dir/full-chain.cert.pem
+    working_dir: /opt/project
+    volumes:
+      - .:/opt/project
+      - api_mock_certs:/root/ca/rsa/volumed_dir
+#  infinite loop to run container
+    entrypoint: ["sh", "-c", "while true; do sleep 1000; done"]
+#    entrypoint: ["ping", "-c", "5", "api-mock-server"]
+
+  api-mock:
+    build: .
+    container_name: api-mock-server
+    restart: always
+    volumes:
+      - api_mock_certs:/root/ca/rsa/volumed_dir
+    ports:
+      - "8080:80"
+      - "8443:443"
+
+  mock-database:
+    image: postgres:latest
+    container_name: mock-db-server
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mockdb
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+# Almost empty database
+#      - ./database/empty.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+
+volumes:
+  api_mock_certs:

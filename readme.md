@@ -14,6 +14,10 @@ If you made any changes to api-mock service - rebuild it with the same above cmd
 docker-compose up -d
 ```
 
+```
+docker run -p 443:443 mock-api-server
+```
+
 ### RUN TESTS
 ```
 docker-compose run tests
