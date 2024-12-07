@@ -1,4 +1,5 @@
 FROM debian:bookworm-slim
+#USER root
 
 # Set the working directory inside the container
 WORKDIR /opt/project
@@ -14,6 +15,9 @@ RUN python3 -m venv /opt/project/venv && \
     /opt/project/venv/bin/pip install --upgrade pip setuptools && \
     /opt/project/venv/bin/pip install pytest
 
+    # Print debug info to ensure pytest installation
+RUN which pytest && pytest --version
+
 # Copy the project files into the container
 COPY . /opt/project/
 
@@ -25,5 +29,5 @@ ENV PYTHONWARNINGS="ignore:Unverified HTTPS request"
 ENV PATH="/opt/project/venv/bin:$PATH"
 
 # Set entrypoint to run tests
-ENTRYPOINT ["pytest", "tests"]
+ENTRYPOINT ["python3", "-m", "pytest"]
 CMD ["-v"]
