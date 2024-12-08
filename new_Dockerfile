@@ -1,31 +1,36 @@
 FROM library/debian:bookworm-slim
-USER root
+#USER root
 
-RUN mkdir -p /opt/project/upload
+# Set the working directory inside the container
 WORKDIR /opt/project
 
-COPY debian_packages.txt    /opt/project/debian_packages.txt
-RUN apt-get update --allow-insecure-repositories && \
-    DEBIAN_FRONTEND=noninteractive xargs -a /opt/project/debian_packages.txt \
-    apt-get install -y --allow-unauthenticated && \
-    apt-get clean && \
-    rm -rf /opt/project/debian_packages.txt
+# Copy debian packages file and install required packages
+#COPY debian_packages.txt /opt/project/debian_packages.txt
+RUN apt-get update && \
+    apt-get install -y ca-certificates && \
+    pip install --upgrade certifi && \
+    rm -rf /var/lib/apt/lists/*
 
-# Unset because of https://github.com/psf/requests/issues/3829
-ENV REQUESTS_CA_BUNDLE=
+# Create a virtual environment and install pytest
+RUN python3 -m venv /opt/project/venv && \
+    /opt/project/venv/bin/pip install --upgrade pip setuptools && \
+    /opt/project/venv/bin/pip install pytest && \
+    /opt/project/venv/bin/pip install requests && \
+    /opt/project/venv/bin/pip list
 
-# Ignore warnings during requests calls
+# Print debug info to ensure pytest installation
+RUN which pytest && pytest --version
+
+# Copy the project files into the container
+COPY . /opt/project/
+
+# Set environment variables
+ENV REQUESTS_CA_BUNDLE=/root/ca/rsa/volumed_dir/full-chain.cert.pem
 ENV PYTHONWARNINGS="ignore:Unverified HTTPS request"
 
-ENV MOCK_HOSTNAME=api-mock-server
+# Set the path to use the virtual environment
+ENV PATH="/opt/project/venv/bin:$PATH"
 
-COPY rsa-cert-generation/create_certs.sh            /root/ca/rsa/create_certs.sh
-COPY rsa-cert-generation/root-openssl.conf          /root/ca/rsa/openssl.cnf
-COPY rsa-cert-generation/intermediate-openssl.conf  /root/ca/rsa/intermediate/openssl.cnf
-
-COPY app  /opt/project/
-COPY bin  /opt/project/
-
-RUN /root/ca/rsa/create_certs.sh
-
-ENTRYPOINT ["/opt/project/start.sh"]
+# Set entrypoint to run tests
+ENTRYPOINT ["python3", "-m", "pytest"]
+CMD ["-v"]
