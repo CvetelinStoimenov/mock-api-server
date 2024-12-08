@@ -13,7 +13,7 @@ services:
     volumes:
       - .:/opt/project
       - api_mock_certs:/root/ca/rsa/volumed_dir
-#    command: ["pytest", "-v", "/opt/project/tests"] 
+#    command: ["pytest", "-vv --tb=long", "/opt/project/tests"] 
 
 #  infinite loop to run container
 #    entrypoint: ["sh", "-c", "while true; do sleep 1000; done"]

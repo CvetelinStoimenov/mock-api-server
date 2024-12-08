@@ -23,6 +23,7 @@ COPY . /opt/project/
 # Set environment variables
 ENV REQUESTS_CA_BUNDLE=/root/ca/rsa/volumed_dir/full-chain.cert.pem
 ENV PYTHONWARNINGS="ignore:Unverified HTTPS request"
+ENV PYTHONPATH=/opt/project
 
 # Set the path to use the virtual environment
 ENV PATH="/opt/project/venv/bin:$PATH"
