@@ -6,4 +6,4 @@ from helpers.cert_helper import fetch_certificate
 
 @pytest.fixture(scope="session", autouse=True)
 def wait_for_mock_server():
-    wait_for_server("http://localhost:8080")
+    wait_for_server("http://localhost:8080/inventory/devices")

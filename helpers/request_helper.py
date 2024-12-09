@@ -1,8 +1,10 @@
 import requests
 import json
+from pathlib import Path
 
 def get_base_url():
-    with open("config/config.json", "r") as config_file:
+    file_path = Path(__file__).resolve().parent.parent / "tests" / "config" / "config.json"
+    with open(file_path, "r") as config_file:
         config = json.load(config_file)
 
     if config["use_https"]:
